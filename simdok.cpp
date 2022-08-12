@@ -1,5 +1,6 @@
 #include <immintrin.h>
 #include <smmintrin.h>
+#include "htimer.h"
 
 #include "bits/stdc++.h"
 // https://www.cs.virginia.edu/~cr4bd/3330/F2018/simdref.html
@@ -37,35 +38,24 @@ int add_AVX(int size, int * first_array, int * second_array) {
 }
 
 int main() {
-  int size = 65536;
+  constexpr int size = 65536;
   int *first_array = new int[size];
   int *second_array = new int[size];
   for (int i = 0; i < size; ++i) {
     first_array[i] = i;
     second_array[i] = i;
   }
+ 
+  {
+    htimer timer("add_avx");
+    add_AVX(size, first_array, second_array);
+  }
 
-  struct timespec begin, end;
-  clock_gettime(CLOCK_MONOTONIC_RAW, &begin);
-  // add_no_AVX(size, first_array, second_array);
-  add_AVX(size, first_array, second_array);
+  {
+    htimer timer("add_no_avx");
+    add_no_AVX(size, first_array, second_array);
+  }
 
-  clock_gettime(CLOCK_MONOTONIC_RAW, &end);
-
-  printf("add_AVX:    %f seconds\n",
-         (end.tv_nsec - begin.tv_nsec) / 1000000000.0 +
-             (end.tv_sec - begin.tv_sec));
-
-
-  clock_gettime(CLOCK_MONOTONIC_RAW, &begin);
-
-  add_no_AVX(size, first_array, second_array);
-
-  clock_gettime(CLOCK_MONOTONIC_RAW, &end);
-
-  printf("add_no_AVX: %f seconds\n",
-         (end.tv_nsec - begin.tv_nsec) / 1000000000.0 +
-             (end.tv_sec - begin.tv_sec));
   /*
   for (int i = 0; i < size; ++i) {
       printf("%d\n", first_array[i]);
