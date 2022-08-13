@@ -1,4 +1,5 @@
-
+#ifndef HTIMER_INCLUDED
+#define HTIMER_INCLUDED
 #include <stdio.h>
 #include <time.h>
 #include <string>
@@ -23,3 +24,4 @@ private:
   struct timespec begin, end;
   std::string title;
 };
+#endif
